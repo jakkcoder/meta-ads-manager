@@ -70,6 +70,9 @@ def _lead_record(lead: Lead, form_names: dict[str, str]) -> dict:
         "gold_transition_at": lead.gold_transition_at.isoformat() if lead.gold_transition_at else None,
         "demo_at": lead.demo_at.isoformat() if lead.demo_at else None,
         "demo_review_status": lead.demo_review_status,
+        "annotation_updated_at": (
+            lead.annotation_updated_at.isoformat() if lead.annotation_updated_at else None
+        ),
         "fields": fields,
     }
 

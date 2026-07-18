@@ -89,10 +89,27 @@ def build_parent_ops_report(db: Session) -> dict[str, Any]:
         ):
             overdue_follow_ups.append({**lead, "hours_open": round(hours_open, 1)})
 
-        gold_at = _as_datetime(lead.get("gold_transition_at"))
+        # Existing gold leads predate the dedicated transition timestamp. For
+        # those records, annotation update time is an explicit approximation
+        # rather than silently reporting a misleading zero-day age.
+        gold_at = (
+            _as_datetime(lead.get("gold_transition_at"))
+            or _as_datetime(lead.get("annotation_updated_at"))
+            or created_at
+        )
         if lead.get("status") == GOLD_STATUS:
             age_days = int((_age_hours(gold_at, now) or 0) // 24)
-            gold_aging.append({**lead, "gold_age_days": age_days})
+            gold_aging.append(
+                {
+                    **lead,
+                    "gold_age_days": age_days,
+                    "gold_age_source": (
+                        "transition"
+                        if lead.get("gold_transition_at")
+                        else "annotation estimate"
+                    ),
+                }
+            )
 
         demo_at = _as_datetime(lead.get("demo_at"))
         review_status = (lead.get("demo_review_status") or "pending").lower()

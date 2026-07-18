@@ -62,7 +62,7 @@
       <tr>
         <td>{{ lead.fields.full_name or "—" }}</td>
         <td>{{ lead.fields.phone_number or "—" }}</td>
-        <td>{{ lead.gold_age_days }} day(s)</td>
+        <td>{{ lead.gold_age_days }} day(s) <span class="muted">({{ lead.gold_age_source }})</span></td>
         <td>{{ lead.demo_at or "Not set" }}</td>
         <td>{{ lead.demo_review_status or "Pending" }}</td>
       </tr>
