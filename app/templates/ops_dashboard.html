@@ -3,48 +3,36 @@
 {% block content %}
 <h1>Parent lead operations</h1>
 <p class="muted">
-  Live queue for repeat leads, first follow-up SLA, gold aging, and demos awaiting review.
+  Lead-quality view focused on duplicate parent submissions and gold lead aging.
   Generated {{ generated_at }}.
 </p>
 
 <section class="stats">
   <div class="stat"><div class="stat-value">{{ kpis.parent_leads_today }}</div><div class="stat-label">Parent leads today</div></div>
   <div class="stat"><div class="stat-value">{{ kpis.repeat_phone_groups }}</div><div class="stat-label">Repeat-phone groups</div></div>
-  <div class="stat"><div class="stat-value">{{ kpis.overdue_first_follow_ups }}</div><div class="stat-label">Overdue first follow-ups ({{ thresholds.first_follow_up_minutes }} min)</div></div>
+  <div class="stat"><div class="stat-value">{{ kpis.gold_leads }}</div><div class="stat-label">Gold leads</div></div>
   <div class="stat"><div class="stat-value">{{ kpis.stale_gold_leads }}</div><div class="stat-label">Gold leads stale {{ thresholds.gold_stale_days }}+ days</div></div>
   <div class="stat"><div class="stat-value">{{ kpis.demos_pending_review }}</div><div class="stat-label">Demos pending review</div></div>
-</section>
-
-<section class="card">
-  <h2>Follow-up SLA queue</h2>
-  {% if overdue_follow_ups %}
-  <table>
-    <thead><tr><th>Parent</th><th>Phone</th><th>Location</th><th>Lead age</th><th>Action</th></tr></thead>
-    <tbody>
-    {% for lead in overdue_follow_ups %}
-      <tr>
-        <td>{{ lead.fields.full_name or "—" }}</td>
-        <td>{{ lead.fields.phone_number or "—" }}</td>
-        <td>{{ lead.location or "—" }}</td>
-        <td>{{ lead.hours_open }} h</td>
-        <td><a class="btn" href="/leads/parents?search={{ lead.fields.phone_number | urlencode }}">Open lead</a></td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  {% else %}<p class="muted">No overdue first follow-ups.</p>{% endif %}
 </section>
 
 <section class="card">
   <h2>Repeat parent leads</h2>
   {% if repeat_leads %}
   <table>
-    <thead><tr><th>Phone</th><th>Submissions</th><th>Latest lead</th><th>Action</th></tr></thead>
+    <thead><tr><th>Phone</th><th>Submissions</th><th>Lead records</th><th>Action</th></tr></thead>
     <tbody>
     {% for group in repeat_leads %}
       <tr>
-        <td>{{ group.phone }}</td><td>{{ group.count }}</td><td>{{ group.latest_created_at or "—" }}</td>
-        <td><a class="btn" href="/leads/parents?search={{ group.phone }}">Review duplicates</a></td>
+        <td>{{ group.phone }}</td><td>{{ group.count }}</td>
+        <td>
+          {% for lead in group.leads %}
+          <div class="lead-record" id="duplicate-{{ lead.id }}">
+            <span>{{ lead.name }} · {{ lead.created_time[:10] if lead.created_time else "—" }}</span>
+            <button class="btn btn-danger" type="button" onclick="moveToJunk('{{ lead.id }}', 'duplicate-{{ lead.id }}')">Move to junk</button>
+          </div>
+          {% endfor %}
+        </td>
+        <td><a class="btn" href="/leads/parents?search={{ group.phone }}">Open all</a></td>
       </tr>
     {% endfor %}
     </tbody>
@@ -56,15 +44,16 @@
   <h2>Gold lead aging</h2>
   {% if gold_aging %}
   <table>
-    <thead><tr><th>Parent</th><th>Phone</th><th>Gold age</th><th>Demo at</th><th>Review</th></tr></thead>
+    <thead><tr><th>Parent</th><th>Phone</th><th>Gold age</th><th>Demo at</th><th>Review</th><th>Action</th></tr></thead>
     <tbody>
     {% for lead in gold_aging %}
-      <tr>
+      <tr id="gold-{{ lead.id }}">
         <td>{{ lead.fields.full_name or "—" }}</td>
         <td>{{ lead.fields.phone_number or "—" }}</td>
         <td>{{ lead.gold_age_days }} day(s) <span class="muted">({{ lead.gold_age_source }})</span></td>
         <td>{{ lead.demo_at or "Not set" }}</td>
         <td>{{ lead.demo_review_status or "Pending" }}</td>
+        <td><button class="btn btn-danger" type="button" onclick="moveToJunk('{{ lead.id }}', 'gold-{{ lead.id }}')">Move to junk</button></td>
       </tr>
     {% endfor %}
     </tbody>
@@ -91,8 +80,27 @@
   {% else %}<p class="muted">No demos need review today.</p>{% endif %}
 </section>
 
-<p class="muted">
-  Alerts run every {{ thresholds.first_follow_up_minutes }} minutes and can post to
-  <code>OPS_ALERT_WEBHOOK_URL</code> when configured.
-</p>
+<script>
+async function moveToJunk(leadId, elementId) {
+  if (!confirm("Move this lead to junk?")) return;
+  const response = await fetch("/api/leads/" + leadId, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_junk: true }),
+  });
+  if (!response.ok) {
+    alert("Could not move lead to junk. Please try again.");
+    return;
+  }
+  const row = document.getElementById(elementId);
+  if (row) {
+    const container = row.closest("tr") || row;
+    container.remove();
+  }
+}
+</script>
+<style>
+  .lead-record { display:flex; gap:.5rem; align-items:center; justify-content:space-between; padding:.25rem 0; }
+  .lead-record .btn { padding:.28rem .5rem; font-size:.75rem; }
+</style>
 {% endblock %}

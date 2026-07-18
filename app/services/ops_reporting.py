@@ -66,6 +66,15 @@ def build_parent_ops_report(db: Session) -> dict[str, Any]:
                     "phone": phone,
                     "count": len(grouped),
                     "lead_ids": [lead["id"] for lead in grouped],
+                    "leads": [
+                        {
+                            "id": lead["id"],
+                            "name": (lead.get("fields") or {}).get("full_name") or "Unnamed parent",
+                            "created_time": lead.get("created_time"),
+                            "status": lead.get("status"),
+                        }
+                        for lead in grouped
+                    ],
                     "latest_created_at": max(
                         (lead.get("created_time") or "" for lead in grouped), default=""
                     ),
