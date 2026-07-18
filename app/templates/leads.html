@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Leads — Meta Ads Manager{% endblock %}
+{% block content %}
+<h1>Leads</h1>
+
+<div class="card">
+  <form method="get" action="/leads" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+    <select name="form_id">
+      <option value="">All forms</option>
+      {% for form in forms %}
+      <option value="{{ form.id }}" {% if selected_form_id == form.id %}selected{% endif %}>{{ form.name or form.id }}</option>
+      {% endfor %}
+    </select>
+    <input type="text" name="search" placeholder="Search name, email, phone..." value="{{ search }}">
+    <button type="submit" class="btn">Filter</button>
+    <a href="/api/leads/export.csv{% if selected_form_id %}?form_id={{ selected_form_id }}{% endif %}" class="btn btn-secondary" style="text-decoration:none;">Export CSV</a>
+  </form>
+</div>
+
+<div class="card">
+  {% if leads %}
+  <table>
+    <thead>
+      <tr>
+        <th>Created</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Form</th>
+        <th>Campaign</th>
+        <th>Platform</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in leads %}
+      <tr>
+        <td>{{ item.lead.created_time or "—" }}</td>
+        <td>{{ item.fields.get("full_name", "—") }}</td>
+        <td>{{ item.fields.get("email", "—") }}</td>
+        <td>{{ item.fields.get("phone_number", "—") }}</td>
+        <td>{{ item.form_name or item.lead.form_id }}</td>
+        <td>{{ item.lead.campaign_id or "—" }}</td>
+        <td>{{ item.lead.platform or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No leads in database yet. Run Sync Leads from the Overview page.</p>
+  {% endif %}
+</div>
+{% endblock %}

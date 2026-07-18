@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+  <meta name="theme-color" content="#f97316" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>Book a Free Demo Class | Gharkaguru</title>
+  <meta name="description" content="Book a free math demo class for your child. Quick signup — works on Instagram and mobile." />
+  <meta property="og:title" content="Book a Free Demo Class | Gharkaguru" />
+  <meta property="og:description" content="Fun online & home math classes for Class 1–12. Book your free demo in 60 seconds." />
+  <meta property="og:type" content="website" />
+  {% if meta_pixel_id %}
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '{{ meta_pixel_id }}');
+    fbq('track', 'PageView');
+  </script>
+  {% endif %}
+  <style>
+    :root {
+      --orange: #f97316;
+      --orange-dark: #ea580c;
+      --orange-light: #fff7ed;
+      --bg: #faf8f5;
+      --card: #ffffff;
+      --text: #1c1917;
+      --muted: #78716c;
+      --border: #e7e5e4;
+      --radius: 16px;
+      --shadow: 0 8px 32px rgba(28, 25, 23, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      line-height: 1.5;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 12px 24px;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    @media (min-width: 768px) {
+      .page { padding: 24px 16px 48px; }
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--orange-dark);
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+      .card { grid-template-columns: 280px 1fr; min-height: 520px; }
+    }
+
+    @media (max-width: 767px) {
+      .card-side { display: none; }
+      .card { border-radius: 16px; box-shadow: 0 4px 20px rgba(28, 25, 23, 0.06); }
+      .card-main { padding: 20px 16px 0; }
+      .nav-row {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        background: linear-gradient(transparent, var(--card) 12%);
+        margin: 20px -16px 0;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        border-top: 1px solid var(--border);
+      }
+      .option-btn, .btn, .date-chip, .time-chip { min-height: 44px; touch-action: manipulation; }
+      .field input { font-size: 16px; }
+    }
+
+    .card-side {
+      background: linear-gradient(160deg, var(--orange) 0%, var(--orange-dark) 100%);
+      color: #fff;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .card-side .quote {
+      font-size: 1.35rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .card-side .sub {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .card-main {
+      padding: 28px 24px 32px;
+      position: relative;
+    }
+
+    .progress {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .progress span {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+
+    .progress span.active,
+    .progress span.done {
+      background: var(--orange);
+    }
+
+    .step { display: none; animation: fadeIn 0.35s ease; }
+    .step.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .step-sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .option-grid.cols-1 { grid-template-columns: 1fr; }
+
+    .option-grid.class-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (min-width: 520px) {
+      .option-grid.class-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .option-grid.class-grid .option-btn {
+      padding: 14px 8px;
+      font-size: 0.9rem;
+    }
+
+    .option-btn {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: #fff;
+      cursor: pointer;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      font-family: inherit;
+      color: var(--text);
+    }
+
+    .option-btn:hover {
+      border-color: var(--orange);
+      background: var(--orange-light);
+    }
+
+    .option-btn.selected {
+      border-color: var(--orange);
+      background: var(--orange-light);
+      box-shadow: 0 0 0 1px var(--orange);
+    }
+
+    .option-btn .icon {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    .field .error {
+      color: #dc2626;
+      font-size: 0.8rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .field.invalid input { border-color: #dc2626; }
+    .field.invalid .error { display: block; }
+
+    .date-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      scrollbar-width: thin;
+    }
+
+    .date-chip {
+      flex: 0 0 auto;
+      min-width: 72px;
+      padding: 12px 10px;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      cursor: pointer;
+      text-align: center;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .date-chip .dow { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+    .date-chip .dom { font-size: 1.1rem; font-weight: 700; }
+    .date-chip .mon { font-size: 0.7rem; color: var(--muted); }
+
+    .date-chip.selected {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .time-section {
+      background: #f5f5f4;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 8px;
+    }
+
+    .time-section h4 {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .time-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .time-chip {
+      padding: 10px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .time-chip.selected {
+      border-color: var(--orange);
+      background: var(--orange-light);
+      font-weight: 600;
+    }
+
+    .time-chip:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .tz-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+    }
+
+    .btn-back {
+      background: #f5f5f4;
+      color: var(--text);
+      flex: 0 0 auto;
+      padding: 14px 18px;
+    }
+
+    .btn-next {
+      background: var(--orange);
+      color: #fff;
+    }
+
+    .btn-next:hover { background: var(--orange-dark); }
+    .btn-next:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .success-panel {
+      text-align: center;
+      padding: 8px 4px 16px;
+    }
+
+    .success-panel .check {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #dcfce7;
+      color: #16a34a;
+      font-size: 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+
+    .success-panel h2 { margin-bottom: 4px; font-size: 1.35rem; }
+    .success-panel .success-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+
+    .summary-card {
+      text-align: left;
+      background: #fafaf9;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .summary-card h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      padding: 12px 16px;
+      background: #f5f5f4;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+
+    .summary-row .label {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .summary-row .value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .ref-badge {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 6px 12px;
+      background: var(--orange-light);
+      color: var(--orange-dark);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--orange-dark);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .step[data-step="done"].active ~ .progress,
+    .card-main:has(.step[data-step="done"].active) .progress { display: none; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="brand">
+      <h1>Gharkaguru</h1>
+      <p>Phone + preferred time — book in seconds</p>
+    </div>
+
+    <div class="card">
+      <aside class="card-side">
+        <div class="quote" id="sideQuote">Pick a demo time</div>
+        <p class="sub" id="sideSub">Choose a date and time that works for you</p>
+      </aside>
+
+      <main class="card-main">
+        <div class="progress" id="progressBar">
+          <span></span><span></span>
+        </div>
+
+        <section class="step active" data-step="1">
+          <h2 class="step-title">Choose demo time</h2>
+          <p class="step-sub">Select a convenient slot</p>
+          <p class="tz-note" id="tzNote">Showing times in your local timezone</p>
+          <div class="date-row" id="dateRow"></div>
+          <div id="timeSections"></div>
+        </section>
+
+        <section class="step" data-step="2">
+          <h2 class="step-title">Your mobile number</h2>
+          <p class="step-sub">We'll call to confirm your free demo</p>
+          <div class="field" id="fieldPhone">
+            <label for="phone">Mobile number</label>
+            <input type="tel" id="phone" placeholder="10-digit mobile number" autocomplete="tel" inputmode="numeric" required />
+            <span class="error">Please enter a valid 10-digit mobile number</span>
+          </div>
+        </section>
+
+        <!-- Confirmation summary -->
+        <section class="step" data-step="done">
+          <div class="success-panel">
+            <div class="check">✓</div>
+            <h2>Booking confirmed!</h2>
+            <p class="success-sub">We'll call you shortly</p>
+            <div class="summary-card">
+              <h3>Booking summary</h3>
+              <div id="summaryDetails"></div>
+            </div>
+            <div class="ref-badge" id="bookingRef"></div>
+            <a class="back-link" href="/book/parent">Book another demo</a>
+          </div>
+        </section>
+
+        <div class="nav-row" id="navRow">
+          <button type="button" class="btn btn-back" id="btnBack" style="display:none">←</button>
+          <button type="button" class="btn btn-next" id="btnNext" disabled>Continue</button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const locale = navigator.language || "en-IN";
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const SLOT_HOURS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+
+    const state = {
+      step: 1,
+      phone: "",
+      slot_date: "",
+      slot_time: "",
+      user_timezone: userTimezone,
+      platform: "web",
+      utm_source: null,
+      utm_medium: null,
+      utm_campaign: null,
+      fbclid: null,
+    };
+
+    function captureAttribution() {
+      const params = new URLSearchParams(window.location.search);
+      const ua = navigator.userAgent || "";
+      let platform = "web";
+      if (/Instagram/i.test(ua)) platform = "instagram";
+      else if (/FBAN|FBAV|Facebook/i.test(ua)) platform = "facebook";
+
+      const utmSource = (params.get("utm_source") || "").toLowerCase();
+      if (utmSource.includes("instagram")) platform = "instagram";
+      if (utmSource.includes("facebook") || utmSource === "fb") platform = "facebook";
+
+      state.platform = platform;
+      state.utm_source = params.get("utm_source");
+      state.utm_medium = params.get("utm_medium");
+      state.utm_campaign = params.get("utm_campaign");
+      state.fbclid = params.get("fbclid");
+    }
+
+    captureAttribution();
+
+    const navRow = document.getElementById("navRow");
+    const btnBack = document.getElementById("btnBack");
+    const btnNext = document.getElementById("btnNext");
+    const progressBar = document.getElementById("progressBar");
+    const sideQuote = document.getElementById("sideQuote");
+    const sideSub = document.getElementById("sideSub");
+
+    const sideQuotes = {
+      1: ["Pick a demo time", "Choose a date and time that works for you"],
+      2: ["Almost done!", "Enter your number and we'll confirm your demo"],
+      done: ["You're all set!", "We'll call you shortly to confirm"],
+    };
+
+    function phoneValid(s) {
+      const digits = s.replace(/\D/g, "");
+      if (digits.length === 10) return /^[6-9]/.test(digits);
+      if (digits.length === 12 && digits.startsWith("91")) return /^91[6-9]/.test(digits);
+      return false;
+    }
+
+    function formatPhone(s) {
+      const digits = s.replace(/\D/g, "").slice(-10);
+      return `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
+    }
+
+    function localDateParts(date) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: userTimezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).formatToParts(date);
+      const get = (type) => parts.find((p) => p.type === type)?.value || "";
+      return { iso: `${get("year")}-${get("month")}-${get("day")}`, year: get("year"), month: get("month"), day: get("day") };
+    }
+
+    function formatLocalDateLabel(date) {
+      return new Intl.DateTimeFormat(locale, {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        timeZone: userTimezone,
+      }).format(date);
+    }
+
+    function formatLocalTime(hour, baseDate) {
+      const parts = localDateParts(baseDate);
+      const dt = new Date(Number(parts.year), Number(parts.month) - 1, Number(parts.day), hour, 0, 0);
+      return new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(dt);
+    }
+
+    function formatLocalDateLong(iso) {
+      const [year, month, day] = iso.split("-").map(Number);
+      const dt = new Date(year, month - 1, day, 12, 0, 0);
+      return new Intl.DateTimeFormat(locale, {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(dt);
+    }
+
+    function timezoneLabel() {
+      try {
+        const parts = new Intl.DateTimeFormat(locale, {
+          timeZone: userTimezone,
+          timeZoneName: "short",
+        }).formatToParts(new Date());
+        const tzName = parts.find((p) => p.type === "timeZoneName")?.value;
+        return tzName ? `${userTimezone} (${tzName})` : userTimezone;
+      } catch (e) {
+        return userTimezone;
+      }
+    }
+
+    function renderConfirmationSummary(bookingId) {
+      const rows = [
+        ["Mobile", formatPhone(state.phone)],
+        ["Demo date", formatLocalDateLong(state.slot_date)],
+        ["Demo time", state.slot_time],
+        ["Timezone", state.user_timezone],
+      ];
+
+      document.getElementById("summaryDetails").innerHTML = rows
+        .map(
+          ([label, value]) =>
+            `<div class="summary-row"><span class="label">${label}</span><span class="value">${value}</span></div>`
+        )
+        .join("");
+
+      document.getElementById("bookingRef").textContent = `Reference #${bookingId}`;
+    }
+
+    function updateUI() {
+      document.querySelectorAll(".step").forEach((el) => {
+        const s = el.dataset.step;
+        el.classList.toggle(
+          "active",
+          s === String(state.step) || (state.step === "done" && s === "done")
+        );
+      });
+
+      progressBar.querySelectorAll("span").forEach((bar, i) => {
+        if (state.step === "done") {
+          bar.classList.add("done");
+          bar.classList.remove("active");
+          return;
+        }
+        bar.classList.toggle("done", i + 1 < state.step);
+        bar.classList.toggle("active", i + 1 === state.step);
+      });
+
+      if (sideQuotes[state.step]) {
+        sideQuote.textContent = sideQuotes[state.step][0];
+        sideSub.textContent = sideQuotes[state.step][1];
+      }
+
+      btnBack.style.display = state.step === 2 ? "block" : "none";
+      navRow.style.display = state.step === "done" ? "none" : "flex";
+      validateStep();
+    }
+
+    function validateStep() {
+      let ok = false;
+      if (state.step === 1) {
+        ok = !!state.slot_date && !!state.slot_time;
+        btnNext.textContent = "Continue";
+      } else if (state.step === 2) {
+        ok = phoneValid(state.phone);
+        document.getElementById("fieldPhone").classList.toggle(
+          "invalid",
+          state.phone && !phoneValid(state.phone)
+        );
+        btnNext.textContent = "Book free demo";
+      }
+      btnNext.disabled = !ok;
+    }
+
+    document.getElementById("phone").addEventListener("input", (e) => {
+      state.phone = e.target.value;
+      validateStep();
+    });
+
+    btnBack.addEventListener("click", () => {
+      if (state.step === 2) {
+        state.step = 1;
+        updateUI();
+      }
+    });
+
+    btnNext.addEventListener("click", async () => {
+      if (btnNext.disabled) return;
+      if (state.step === 1) {
+        state.step = 2;
+        updateUI();
+        document.getElementById("phone").focus();
+        return;
+      }
+      btnNext.disabled = true;
+      btnNext.textContent = "Booking…";
+      try {
+        const res = await fetch("/api/book/parent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: state.phone.trim(),
+            slot_date: state.slot_date,
+            slot_time: state.slot_time,
+            user_timezone: state.user_timezone,
+            platform: state.platform,
+            utm_source: state.utm_source,
+            utm_medium: state.utm_medium,
+            utm_campaign: state.utm_campaign,
+            fbclid: state.fbclid,
+          }),
+        });
+        if (!res.ok) throw new Error("Booking failed");
+        const data = await res.json();
+        if (typeof fbq === "function") {
+          fbq("track", "Lead", { content_name: "parent_demo_booking", platform: state.platform });
+        }
+        renderConfirmationSummary(data.booking_id);
+        state.step = "done";
+        updateUI();
+      } catch (err) {
+        btnNext.disabled = false;
+        btnNext.textContent = "Book free demo";
+        alert("Something went wrong. Please try again.");
+      }
+    });
+
+    function loadLocalSlots() {
+      document.getElementById("tzNote").textContent = `Times shown in your local timezone: ${timezoneLabel()}`;
+
+      const dateRow = document.getElementById("dateRow");
+      dateRow.innerHTML = "";
+      const dates = [];
+      const now = new Date();
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(now);
+        d.setDate(now.getDate() + i);
+        dates.push(d);
+      }
+
+      dates.forEach((d, i) => {
+        const parts = localDateParts(d);
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "date-chip" + (i === 0 ? " selected" : "");
+        const weekday = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: userTimezone }).format(d);
+        const month = new Intl.DateTimeFormat(locale, { month: "short", timeZone: userTimezone }).format(d).toUpperCase();
+        chip.innerHTML = `<div class="dow">${weekday.toUpperCase()}</div><div class="dom">${parts.day}</div><div class="mon">${month}</div>`;
+        chip.dataset.iso = parts.iso;
+        chip.addEventListener("click", () => {
+          dateRow.querySelectorAll(".date-chip").forEach((c) => c.classList.remove("selected"));
+          chip.classList.add("selected");
+          state.slot_date = parts.iso;
+          renderTimeSlots(d);
+          validateStep();
+        });
+        dateRow.appendChild(chip);
+      });
+
+      if (dates.length) {
+        state.slot_date = localDateParts(dates[0]).iso;
+        renderTimeSlots(dates[0]);
+      }
+      validateStep();
+    }
+
+    function renderTimeSlots(baseDate) {
+      const timeSections = document.getElementById("timeSections");
+      timeSections.innerHTML = "";
+
+      const groups = [
+        { label: "Morning", icon: "☀️", hours: [10, 11, 12] },
+        { label: "Afternoon", icon: "🌤️", hours: [13, 14, 15, 16, 17] },
+        { label: "Evening", icon: "🌙", hours: [18, 19, 20, 21] },
+      ];
+
+      function selectTime(chip, label) {
+        timeSections.querySelectorAll(".time-chip").forEach((c) => c.classList.remove("selected"));
+        chip.classList.add("selected");
+        state.slot_time = label;
+        validateStep();
+      }
+
+      groups.forEach((group) => {
+        const section = document.createElement("div");
+        section.className = "time-section";
+        section.innerHTML = `<h4>${group.icon} ${group.label}</h4>`;
+        const grid = document.createElement("div");
+        grid.className = "time-grid";
+        group.hours.forEach((hour) => {
+          const label = formatLocalTime(hour, baseDate);
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "time-chip";
+          chip.textContent = label;
+          chip.addEventListener("click", () => selectTime(chip, label));
+          grid.appendChild(chip);
+        });
+        section.appendChild(grid);
+        timeSections.appendChild(section);
+      });
+
+      state.slot_time = "";
+    }
+
+    loadLocalSlots();
+    updateUI();
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Cloud Run Services — Meta Ads Manager{% endblock %}
+{% block content %}
+<h1>All Cloud Run Services</h1>
+<p class="muted">Web apps deployed in project <strong>{{ catalog.project_id or "—" }}</strong>.</p>
+
+{% if catalog.error %}
+<div class="card" style="border-color:#7f1d1d;">
+  <strong>Could not load services</strong>
+  <p class="muted">{{ catalog.error }}</p>
+  <p class="muted">On Cloud Run, grant this service account <code>roles/run.viewer</code> on the project.</p>
+</div>
+{% elif catalog.services %}
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Application</th>
+        <th>Service ID</th>
+        <th>Region</th>
+        <th>URL</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for svc in catalog.services %}
+      <tr>
+        <td>
+          {{ svc.name }}
+          {% if svc.is_current %}<span class="muted">(this app)</span>{% endif %}
+        </td>
+        <td><code>{{ svc.id }}</code></td>
+        <td>{{ svc.region }}</td>
+        <td>
+          {% if svc.url %}
+          <a href="{{ svc.url }}" target="_blank" rel="noopener">{{ svc.url }}</a>
+          {% else %}
+          —
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card">
+  <p class="muted">No Cloud Run services found in this project.</p>
+</div>
+{% endif %}
+
+<p><a href="/" class="btn btn-secondary" style="text-decoration:none;">← Back to Overview</a></p>
+{% endblock %}

@@ -1,0 +1,197 @@
+/* Gharkaguru CMO Dashboard */
+
+.cmo-root {
+  min-height: 100vh;
+  background: #0b1220;
+}
+
+.dashboard-shell {
+  display: flex;
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: #0f172a;
+  border-right: 1px solid #1f2937;
+  padding: 1.25rem 1rem;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-brand .brand-title {
+  margin: 0;
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+.sidebar-brand .brand-sub {
+  margin: 0.15rem 0 1rem;
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.sidebar-nav .nav-link {
+  color: #9ca3af !important;
+  margin-bottom: 0.25rem;
+  border-radius: 8px;
+}
+
+.sidebar-nav .nav-link.active {
+  background: #1e3a5f !important;
+  color: #93c5fd !important;
+}
+
+.main-panel {
+  flex: 1;
+  padding: 1rem 1.25rem 2rem;
+  overflow-x: hidden;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.last-updated {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.kpi-card {
+  background: #111827 !important;
+  border: 1px solid #1f2937 !important;
+  border-radius: 12px !important;
+}
+
+.kpi-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+.kpi-label {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.kpi-delta {
+  margin-top: 0.35rem;
+}
+
+.kpi-spark {
+  height: 45px !important;
+  margin-top: 0.25rem;
+}
+
+.sync-progress-wrap {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: #111827;
+  border: 1px solid #2563eb;
+  border-radius: 10px;
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+.data-loading-panel {
+  margin-bottom: 0.75rem;
+}
+
+.data-loading-msg {
+  color: #93c5fd;
+  font-size: 0.82rem;
+  margin-top: 0.25rem;
+}
+
+.data-loading-bar .progress-bar {
+  background: linear-gradient(90deg, #2563eb, #60a5fa, #2563eb);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+._dash-loading {
+  min-height: 120px;
+}
+
+._dash-loading-callback {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+.sync-progress-message {
+  color: #93c5fd;
+  font-size: 0.9rem;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: #2563eb; }
+  50% { border-color: #60a5fa; }
+}
+
+.tab-content {
+  margin-top: 0.5rem;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1rem;
+}
+
+.chart-card {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+
+.funnel-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.funnel-stat {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  min-width: 120px;
+}
+
+.funnel-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.funnel-stat-label {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Parent Leads — Meta Ads Manager{% endblock %}
+{% block content %}
+<h1 class="page-title">Parent leads</h1>
+<p class="muted">All parent-segment leads. Schedule a demo to move a lead to Gold, or move junk leads out of the parents export.</p>
+
+<div class="tabs">
+  <a href="/leads/parents?tab=latest" class="tab {% if tab == 'latest' %}tab-active{% endif %}">
+    Latest form — {{ latest_form_name }} <span class="tab-count">{{ latest_count }}</span>
+  </a>
+  <a href="/leads/parents?tab=older" class="tab {% if tab == 'older' %}tab-active{% endif %}">
+    Older forms <span class="tab-count">{{ older_count }}</span>
+  </a>
+</div>
+
+<div class="card">
+  <form method="get" action="/leads/parents" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+    <input type="hidden" name="tab" value="{{ tab }}">
+    {% if tab == 'older' %}
+    <select name="form_id">
+      <option value="">All older forms</option>
+      {% for form in forms %}
+      <option value="{{ form.id }}" {% if selected_form_id == form.id %}selected{% endif %}>{{ form.name or form.id }}</option>
+      {% endfor %}
+    </select>
+    {% endif %}
+    <input type="text" name="search" placeholder="Search any field..." value="{{ search }}">
+    <label class="muted" style="display:flex; align-items:center; gap:0.35rem;">
+      <input type="checkbox" name="show_junk" value="true" {% if show_junk %}checked{% endif %} onchange="this.form.submit()"> Show junk
+    </label>
+    <button type="submit" class="btn">Filter</button>
+    {% if search or selected_form_id or show_junk %}
+    <a href="/leads/parents?tab={{ tab }}" class="btn btn-secondary" style="text-decoration:none;">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<div class="card">
+  <p class="muted" style="margin-top:0;">
+    Showing {{ leads|length }} lead(s){% if junk_count %} · {{ junk_count }} in junk{% endif %} · {{ total_count }} total
+  </p>
+  {% if leads %}
+  {% set view = "parents" %}
+  {% include "_leads_table.html" %}
+  {% else %}
+  <p class="muted">No parent leads to show. Run Sync Leads from the Overview page.</p>
+  {% endif %}
+</div>
+
+<style>
+  .page-title { font-size:2rem; font-weight:800; background:linear-gradient(135deg,#60a5fa,#a78bfa 55%,#f472b6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .tabs { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .tab { text-decoration:none; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:10px 10px 0 0; padding:0.6rem 1.1rem; font-weight:700; transition: all 0.15s ease; }
+  .tab:hover { color:var(--text); background:rgba(59,130,246,0.12); }
+  .tab-active { color:#fff; background:linear-gradient(135deg,#3b82f6,#6366f1); border-color:transparent; box-shadow:0 4px 14px rgba(59,130,246,0.4); }
+  .tab-count { display:inline-block; margin-left:0.4rem; padding:0.05rem 0.5rem; border-radius:999px; font-size:0.72rem; font-weight:800; background:rgba(255,255,255,0.2); color:#fff; }
+  .tab:not(.tab-active) .tab-count { background:var(--bg); color:var(--muted); }
+</style>
+{% endblock %}

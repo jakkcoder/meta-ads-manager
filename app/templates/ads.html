@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Ads — Meta Ads Manager{% endblock %}
+{% block content %}
+<h1>Ads</h1>
+
+<div class="card">
+  <form method="post" action="/sync/ads" class="inline">
+    <button type="submit" class="btn">Sync Ads from Meta</button>
+  </form>
+</div>
+
+<div class="card">
+  {% if campaigns %}
+  {% for campaign in campaigns %}
+  <div class="tree-item">
+    <strong>{{ campaign.name or campaign.id }}</strong>
+    <span class="muted"> — {{ campaign.effective_status or campaign.status }}</span>
+    <div class="tree">
+      {% for ad_set in ad_sets_by_campaign.get(campaign.id, []) %}
+      <div class="tree-item">
+        <span>{{ ad_set.name or ad_set.id }}</span>
+        <span class="muted"> ({{ ad_set.effective_status or ad_set.status }})</span>
+        <div class="tree">
+          {% for ad in ads_by_ad_set.get(ad_set.id, []) %}
+          <div class="tree-item" style="display:flex; align-items:center; gap:0.75rem;">
+            <span>{{ ad.name or ad.id }}</span>
+            <span class="muted">{{ ad.effective_status or ad.status }}</span>
+            {% if ad.status == "ACTIVE" %}
+            <form method="post" action="/ads/{{ ad.id }}/pause" class="inline">
+              <button type="submit" class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.8rem;">Pause</button>
+            </form>
+            {% else %}
+            <form method="post" action="/ads/{{ ad.id }}/activate" class="inline">
+              <button type="submit" class="btn" style="padding:0.25rem 0.5rem; font-size:0.8rem;">Activate</button>
+            </form>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p class="muted">No ads synced yet. Click Sync Ads to pull campaigns, ad sets, and ads.</p>
+  {% endif %}
+</div>
+{% endblock %}

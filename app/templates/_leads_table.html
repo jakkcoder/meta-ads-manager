@@ -1,0 +1,209 @@
+{# Shared editable leads table. Expects: leads (list), view ("parents" | "gold"). #}
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      <th class="col-created">Created</th>
+      <th class="col-phone">Phone</th>
+      <th class="col-budget">Budget</th>
+      <th class="col-class">Class</th>
+      <th class="col-location">Location</th>
+      <th class="col-note">Note</th>
+      <th class="col-mode">Mode</th>
+      <th class="col-action">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in leads %}
+    <tr id="row-{{ item.id }}" data-lead-id="{{ item.id }}" class="{% if item.follow_up_count %}followed{% endif %}{% if item.is_junk %} is-junk{% endif %}">
+      <td class="col-created" title="{{ item.created_time or '' }}">{{ item.created_time[:10] if item.created_time else "—" }}</td>
+      <td class="col-phone">{{ item.fields.get("phone_number", "—") }}</td>
+      <td><input type="text" class="cell-input" id="budget-input-{{ item.id }}" value="{{ item.budget or '' }}" placeholder="—"></td>
+      <td><input type="text" class="cell-input" id="class-input-{{ item.id }}" value="{{ item.student_class or '' }}" placeholder="—"></td>
+      <td><input type="text" class="cell-input" id="location-input-{{ item.id }}" value="{{ item.location or '' }}" placeholder="—"></td>
+      <td><input type="text" class="cell-input cell-input-note" id="note-input-{{ item.id }}" value="{{ item.note or '' }}" placeholder="—"></td>
+      <td>
+        <select id="mode-{{ item.id }}" class="action-select" style="margin-right:0;">
+          <option value="" {% if not item.mode %}selected{% endif %}>—</option>
+          <option value="Online" {% if item.mode == 'Online' %}selected{% endif %}>Online</option>
+          <option value="Offline" {% if item.mode == 'Offline' %}selected{% endif %}>Offline</option>
+        </select>
+      </td>
+      <td class="action-cell">
+        <div class="action-wrap">
+          <select id="action-{{ item.id }}" class="action-select">
+            <option value="">Action…</option>
+            {% if view == 'gold' %}
+            <option value="unschedule">Back to leads</option>
+            {% else %}
+            <option value="schedule_demo">Schedule demo</option>
+            {% endif %}
+            <option value="junk">Move to junk</option>
+            <option value="follow_up">Follow up</option>
+          </select>
+          <button type="button" class="btn" onclick="submitRow('{{ item.id }}')">Submit</button>
+        </div>
+        <div class="action-meta">
+          <span class="row-status" id="row-status-{{ item.id }}">
+            {% if item.is_junk %}<span class="badge-junk">JUNK</span>{% endif %}
+            {% if item.status %}<span class="badge-status">{{ item.status }}</span>{% endif %}
+            {% if item.follow_up_count %}<span class="badge-fu">FU {{ item.follow_up_count }}</span>{% endif %}
+          </span>
+          <span class="muted save-status" id="status-{{ item.id }}"></span>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<style>
+  .table-scroll { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+  .table-scroll table { min-width: 980px; border-collapse: separate; border-spacing: 0; }
+  th, td { vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  thead th {
+    position: sticky; top: 0; z-index: 2;
+    background: linear-gradient(135deg, #1f2b45 0%, #182338 100%);
+    color: #cdd9ee; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
+    border-bottom: 2px solid var(--accent); padding: 0.7rem 0.75rem;
+  }
+  tbody tr { transition: background 0.15s ease, transform 0.05s ease; }
+  tbody tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+  tbody tr:hover td { background: rgba(59,130,246,0.10); }
+  .col-created, .col-phone { white-space: nowrap; }
+  .col-created { width: 96px; }
+  .col-phone { width: 140px; font-weight: 600; color: #93c5fd; }
+  .col-budget, .col-class, .col-location { width: 120px; }
+  .col-note { width: 200px; }
+  .col-mode { width: 120px; }
+  .col-action { width: 240px; }
+  .badge-junk, .badge-status, .badge-fu { display:inline-block; padding:0.12rem 0.5rem; border-radius:999px; font-size:0.68rem; font-weight:800; letter-spacing:0.03em; }
+  .badge-junk { background:linear-gradient(135deg,#7c2d12,#b45309); color:#fff; box-shadow:0 0 10px rgba(245,158,11,0.35); }
+  .badge-status { background:linear-gradient(135deg,#a16207,#f59e0b); color:#1a1500; box-shadow:0 0 12px rgba(251,191,36,0.45); }
+  .badge-fu { background:linear-gradient(135deg,#15803d,#22c55e); color:#fff; box-shadow:0 0 10px rgba(34,197,94,0.35); }
+  .cell-input, .action-select { width:100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.5rem; border-radius: 8px; font-family: inherit; font-size: 0.85rem; transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; }
+  .cell-input:hover, .action-select:hover { border-color: #4b5d7a; }
+  .cell-input:focus, .action-select:focus { outline:none; border-color: var(--accent); background: rgba(59,130,246,0.10); box-shadow: 0 0 0 3px rgba(59,130,246,0.18); }
+  /* Color-coded Mode dropdown */
+  select.mode-online { border-color:#22c55e; color:#86efac; background:rgba(34,197,94,0.10); }
+  select.mode-offline { border-color:#f59e0b; color:#fcd34d; background:rgba(245,158,11,0.10); }
+  .action-wrap { display:flex; align-items:center; gap:0.5rem; }
+  .action-wrap .action-select { flex:1; min-width:0; }
+  .action-wrap .btn { flex:0 0 auto; padding:0.45rem 1rem; font-weight:700; background:linear-gradient(135deg,#3b82f6,#6366f1); box-shadow:0 4px 12px rgba(59,130,246,0.35); transition: transform 0.08s ease, box-shadow 0.15s ease; }
+  .action-wrap .btn:hover { transform: translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.5); }
+  .action-wrap .btn:active { transform: translateY(0); }
+  .action-meta { display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; margin-top:0.4rem; min-height:1.1rem; }
+  .row-status { display:inline-flex; gap:0.3rem; flex-wrap:wrap; }
+  .save-status { font-size:0.75rem; font-weight:600; }
+  tr.followed td { background: linear-gradient(90deg, rgba(34,197,94,0.14), rgba(34,197,94,0.04)); box-shadow: inset 3px 0 0 #22c55e; }
+  tr.is-junk td { background: rgba(148,163,184,0.06); }
+  tr.is-junk .cell-input, tr.is-junk .action-select { opacity:0.6; }
+  tr.removing { transition: opacity 0.3s ease, transform 0.3s ease; opacity: 0 !important; transform: translateX(40px); }
+</style>
+
+<script>
+  const LEADS_VIEW = "{{ view }}";
+
+  function setStatus(id, msg, isError) {
+    const el = document.getElementById('status-' + id);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = isError ? '#f87171' : 'var(--muted)';
+  }
+
+  async function patchLead(id, body) {
+    const res = await fetch('/api/leads/' + id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      let detail = res.status;
+      try { detail = (await res.json()).detail || detail; } catch (e) {}
+      throw new Error(detail);
+    }
+    return res.json();
+  }
+
+  function badge(cls, text) {
+    const s = document.createElement('span');
+    s.className = cls;
+    s.textContent = text;
+    return s;
+  }
+
+  function colorMode(sel) {
+    sel.classList.remove('mode-online', 'mode-offline');
+    if (sel.value === 'Online') sel.classList.add('mode-online');
+    else if (sel.value === 'Offline') sel.classList.add('mode-offline');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('select[id^="mode-"]').forEach((sel) => {
+      colorMode(sel);
+      sel.addEventListener('change', () => colorMode(sel));
+    });
+  });
+
+  function refreshRowStatus(id, lead) {
+    const row = document.getElementById('row-' + id);
+    const cont = document.getElementById('row-status-' + id);
+    cont.innerHTML = '';
+    if (lead.is_junk) cont.appendChild(badge('badge-junk', 'JUNK'));
+    if (lead.status) cont.appendChild(badge('badge-status', lead.status));
+    if (lead.follow_up_count) cont.appendChild(badge('badge-fu', 'FU ' + lead.follow_up_count));
+    row.classList.toggle('followed', !!lead.follow_up_count);
+    row.classList.toggle('is-junk', !!lead.is_junk);
+    document.getElementById('budget-input-' + id).value = lead.budget || '';
+    document.getElementById('class-input-' + id).value = lead.student_class || '';
+    document.getElementById('location-input-' + id).value = lead.location || '';
+    document.getElementById('note-input-' + id).value = lead.note || '';
+    const modeSel = document.getElementById('mode-' + id);
+    modeSel.value = lead.mode || '';
+    colorMode(modeSel);
+  }
+
+  function removeRow(id) {
+    const row = document.getElementById('row-' + id);
+    if (!row) return;
+    row.classList.add('removing');
+    setTimeout(() => {
+      row.remove();
+      const body = document.querySelector('.table-scroll tbody');
+      if (body && body.children.length === 0) location.reload();
+    }, 300);
+  }
+
+  async function submitRow(id) {
+    const body = {
+      budget: document.getElementById('budget-input-' + id).value,
+      student_class: document.getElementById('class-input-' + id).value,
+      location: document.getElementById('location-input-' + id).value,
+      note: document.getElementById('note-input-' + id).value,
+      mode: document.getElementById('mode-' + id).value,
+    };
+    const action = document.getElementById('action-' + id).value;
+    if (action === 'junk') body.is_junk = true;
+    else if (action === 'follow_up') body.increment_follow_up = true;
+    else if (action === 'schedule_demo') body.status = 'Demo scheduled';
+    else if (action === 'unschedule') body.status = '';
+    setStatus(id, 'Saving…', false);
+    try {
+      const lead = await patchLead(id, body);
+      // Leads leave the current page when they move to another bucket.
+      const leavesParents = LEADS_VIEW === 'parents' && (action === 'junk' || action === 'schedule_demo');
+      const leavesGold = LEADS_VIEW === 'gold' && (action === 'junk' || action === 'unschedule');
+      if (leavesParents || leavesGold) {
+        setStatus(id, 'Moved', false);
+        removeRow(id);
+        return;
+      }
+      refreshRowStatus(id, lead);
+      document.getElementById('action-' + id).value = '';
+      setStatus(id, 'Saved', false);
+    } catch (e) {
+      setStatus(id, 'Error: ' + e.message, true);
+    }
+  }
+</script>

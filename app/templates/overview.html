@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Overview — Meta Ads Manager{% endblock %}
+{% block content %}
+<h1>Overview</h1>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-value">{{ leads_today }}</div>
+    <div class="stat-label">Leads today</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">{{ active_campaigns }}</div>
+    <div class="stat-label">Active campaigns</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Sync</h2>
+  <p class="muted">Pull latest data from Meta into your local database.</p>
+  {% if permissions and not permissions.can_sync_leads %}
+  <div style="background:#3b1f1f;border:1px solid #7f1d1d;border-radius:6px;padding:1rem;margin-bottom:1rem;">
+    <strong>Leads sync blocked — missing Meta permission</strong>
+    <p class="muted" style="margin:0.5rem 0;">Your token does not include: <code>leads_retrieval</code></p>
+    <ol style="margin:0.5rem 0 0 1.25rem;color:var(--muted);">
+      {% for step in permissions.fix_steps %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+    <p class="muted" style="margin-top:0.75rem;">Granted permissions: {{ permissions.granted | join(", ") }}</p>
+    {% if permissions.pages %}
+    <p class="muted">Detected page: {{ permissions.pages[0].name }} ({{ permissions.pages[0].id }})</p>
+    {% endif %}
+  </div>
+  {% endif %}
+  <form method="post" action="/sync/ads" class="inline">
+    <button type="submit" class="btn">Sync Ads</button>
+  </form>
+  <form method="post" action="/sync/leads" class="inline" style="margin-left: 0.5rem;">
+    <button type="submit" class="btn btn-secondary">Sync Leads</button>
+  </form>
+  <a href="/cmo/" class="btn" style="margin-left: 0.5rem; text-decoration: none;">CMO Dashboard</a>
+  <a href="/services" class="btn btn-secondary" style="margin-left: 0.5rem; text-decoration: none;">All Services</a>
+</div>
+
+<div class="card">
+  <h2>Sync Status</h2>
+  {% if sync_status %}
+  <table>
+    <thead>
+      <tr><th>Resource</th><th>Last Sync</th><th>Cursor</th><th>Last Error</th></tr>
+    </thead>
+    <tbody>
+      {% for row in sync_status %}
+      <tr>
+        <td>{{ row.resource_type }}</td>
+        <td>{{ row.last_sync_at or "—" }}</td>
+        <td class="muted">{{ row.cursor_value or "—" }}</td>
+        <td class="muted">{{ row.last_error or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No syncs yet. Run Sync Ads or Sync Leads to get started.</p>
+  {% endif %}
+</div>
+{% endblock %}

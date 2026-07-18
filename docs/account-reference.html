@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Ads Manager — Account Reference</title>
+  <style>
+    :root { --bg: #0f1419; --card: #1a2332; --text: #e7ecf3; --muted: #8b9cb3; --accent: #3b82f6; --green: #22c55e; --amber: #f59e0b; --border: #2d3a4f; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); margin: 0; line-height: 1.6; }
+    header { background: var(--card); border-bottom: 1px solid var(--border); padding: 2rem; }
+    header h1 { margin: 0 0 0.5rem; color: var(--accent); }
+    main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    h2 { margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    h3 { color: var(--accent); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; }
+    .muted { color: var(--muted); }
+    .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+    .badge-active { background: #14532d; color: var(--green); }
+    .badge-paused { background: #422006; color: var(--amber); }
+    .badge-review { background: #1e3a5f; color: #93c5fd; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .stat { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; text-align: center; }
+    .stat-value { font-size: 1.75rem; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 0.85rem; color: var(--muted); }
+    .highlight { background: #1e3a5f; border-left: 4px solid var(--accent); padding: 1rem; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+    code, pre { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+    code { padding: 0.1rem 0.35rem; font-size: 0.85em; }
+    pre { padding: 1rem; overflow-x: auto; font-size: 0.85rem; }
+    ul { padding-left: 1.25rem; }
+    li { margin-bottom: 0.35rem; }
+    .toc a { color: var(--accent); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    .tree { margin: 1rem 0; font-size: 0.9rem; }
+    .tree ul { list-style: none; padding-left: 1.5rem; margin: 0; }
+    .tree > ul { padding-left: 0; }
+    .tree li { position: relative; padding: 0.35rem 0 0.35rem 1.25rem; }
+    .tree li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .tree li::after { content: ""; position: absolute; left: 0; top: 1.1rem; width: 0.75rem; height: 1px; background: var(--border); }
+    .tree > ul > li::before, .tree > ul > li::after { display: none; }
+    .tree > ul > li { padding-left: 0; margin-bottom: 1.25rem; }
+    .tree-node { display: inline-flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.75rem; }
+    .tree-node.campaign { border-color: var(--accent); border-width: 2px; }
+    .tree-node.adset { border-color: #6366f1; }
+    .tree-node.ad { border-color: #475569; }
+    .tree-type { font-size: 0.7rem; text-transform: uppercase; color: var(--muted); font-weight: 600; min-width: 4.5rem; }
+    .tree-id { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Meta Ads Manager — Account Reference</h1>
+    <p class="muted">Jay Shankar Bhatt · <code>act_1579547858935909</code> · Last updated: <strong>2026-06-15</strong></p>
+  </header>
+
+  <main>
+    <section class="toc">
+      <h2>Contents</h2>
+      <ul>
+        <li><a href="#account">Account</a></li>
+        <li><a href="#tree">Campaign Tree</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#parent">Gharkaguru_parent_focus</a></li>
+        <li><a href="#teacher">Gharkaguru_teacher_focus</a></li>
+        <li><a href="#forms">Lead Forms</a></li>
+        <li><a href="#sync">Sync &amp; CLI</a></li>
+      </ul>
+    </section>
+
+    <section id="account">
+      <h2>Account</h2>
+      <div class="stats">
+        <div class="stat"><div class="stat-value">2</div><div class="stat-label">Campaigns</div></div>
+        <div class="stat"><div class="stat-value">2</div><div class="stat-label">Ad Sets</div></div>
+        <div class="stat"><div class="stat-value">2</div><div class="stat-label">Ads</div></div>
+        <div class="stat"><div class="stat-value">748</div><div class="stat-label">Leads in DB</div></div>
+      </div>
+      <table>
+        <tr><th>Page</th><td>Tinnkoralearn (<code>347244005670587</code>)</td></tr>
+        <tr><th>Currency</th><td>INR</td></tr>
+        <tr><th>Database</th><td><code>sqlite:///./data/meta_ads.db</code></td></tr>
+      </table>
+    </section>
+
+    <section id="tree">
+      <h2>Campaign Tree</h2>
+      <div class="tree">
+        <ul>
+          <li>
+            <div class="tree-node campaign">
+              <span class="tree-type">Campaign</span>
+              <strong>Gharkaguru_parent_focus</strong>
+              <span class="badge badge-active">ACTIVE</span>
+              <span class="tree-id"><code>120242004320530227</code></span>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-node adset">
+                  <span class="tree-type">Ad Set</span>
+                  <strong>parents only</strong>
+                  <span class="badge badge-active">ACTIVE</span>
+                  <span class="tree-id"><code>120242004320540227</code></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-node ad">
+                      <span class="tree-type">Ad</span>
+                      <strong>get_parents</strong>
+                      <span class="badge badge-active">ACTIVE</span>
+                      <span class="tree-id"><code>120242004320550227</code></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <div class="tree-node campaign">
+              <span class="tree-type">Campaign</span>
+              <strong>Gharkaguru_teacher_focus</strong>
+              <span class="badge badge-active">ACTIVE</span>
+              <span class="tree-id"><code>120242009910220227</code></span>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-node adset">
+                  <span class="tree-type">Ad Set</span>
+                  <strong>Delhi NCR</strong>
+                  <span class="badge badge-active">ACTIVE</span>
+                  <span class="tree-id"><code>120242009910230227</code></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-node ad">
+                      <span class="tree-type">Ad</span>
+                      <strong>Delhi_hometutors</strong>
+                      <span class="badge badge-active">ACTIVE</span>
+                      <span class="tree-id"><code>120242009910240227</code></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="performance">
+      <h2>Lifetime Performance</h2>
+      <table>
+        <thead><tr><th>Campaign</th><th>Leads</th><th>CPL</th><th>Spend</th><th>CTR</th><th>Best Ad</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Gharkaguru_teacher_focus</td><td>394</td><td>₹3.71</td><td>₹1,459.93</td><td>4.87%</td>
+            <td>Noida — ₹3.56/lead</td>
+          </tr>
+          <tr>
+            <td>Gharkaguru_parent_focus <span class="badge badge-active">RUNNING</span></td>
+            <td>261</td><td>₹12.20</td><td>₹3,183.09</td><td>2.31%</td>
+            <td>get_parents — ₹12.20/lead</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="parent">
+      <h2>Gharkaguru_parent_focus</h2>
+      <table>
+        <tr><th>ID</th><td><code>120242004320530227</code></td></tr>
+        <tr><th>Status</th><td><span class="badge badge-active">ACTIVE</span></td></tr>
+        <tr><th>Objective</th><td>Lead generation (parents)</td></tr>
+        <tr><th>Daily budget</th><td>₹99/day (campaign budget)</td></tr>
+        <tr><th>Ad Set</th><td>parents only — Noida + Delhi region targeting</td></tr>
+        <tr><th>Ad</th><td>get_parents (<code>120242004320550227</code>)</td></tr>
+      </table>
+    </section>
+
+    <section id="teacher">
+      <h2>Gharkaguru_teacher_focus</h2>
+      <table>
+        <tr><th>ID</th><td><code>120242009910220227</code></td></tr>
+        <tr><th>Status</th><td><span class="badge badge-active">ACTIVE</span></td></tr>
+        <tr><th>Objective</th><td>Lead generation (teachers)</td></tr>
+        <tr><th>Daily budget</th><td>₹300/day (campaign budget)</td></tr>
+        <tr><th>Bid strategy</th><td>Lowest cost (maximize lead volume)</td></tr>
+      </table>
+      <h3>Delhi NCR ad set targeting</h3>
+      <table>
+        <tr><th>Location</th><td>Delhi, Noida, Gurugram, Ghaziabad, Faridabad (NCR)</td></tr>
+        <tr><th>Gender</th><td>Female</td></tr>
+        <tr><th>Age</th><td>21–40</td></tr>
+        <tr><th>Interests</th><td>Education, Teacher education, Higher education</td></tr>
+        <tr><th>Placements</th><td>Facebook + Instagram, mobile only (Feed, Stories, Reels)</td></tr>
+        <tr><th>Advantage+</th><td>Off</td></tr>
+        <tr><th>Optimization</th><td>Lead generation</td></tr>
+      </table>
+      <h3>Ads</h3>
+      <table>
+        <thead><tr><th>Ad</th><th>Ad Set</th><th>Status</th><th>Lead Form</th></tr></thead>
+        <tbody>
+          <tr><td>Delhi_hometutors</td><td>Delhi NCR</td><td>ACTIVE</td><td>Trusted Teacher</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="forms">
+      <h2>Lead Gen Forms</h2>
+      <table>
+        <thead><tr><th>Form</th><th>ID</th><th>Status</th><th>Leads</th></tr></thead>
+        <tbody>
+          <tr><td>Generated form 05/23/2026</td><td><code>3888828671411723</code></td><td>ACTIVE</td><td>436</td></tr>
+          <tr><td>find_tutors_parent</td><td><code>2007957593939594</code></td><td>ARCHIVED</td><td>189</td></tr>
+          <tr><td>For parents only</td><td><code>1501785071409085</code></td><td>ACTIVE</td><td>75</td></tr>
+          <tr><td>Trusted Teacher</td><td><code>1332755172115131</code></td><td>ACTIVE</td><td>48</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="sync">
+      <h2>Sync &amp; CLI</h2>
+      <pre>python cli.py sync ads
+python cli.py sync leads
+python cli.py check-permissions
+uvicorn app.main:app --reload --port 8000</pre>
+      <p class="muted">Incremental sync by default. Leads deduped by ID. Page: <code>347244005670587</code></p>
+    </section>
+  </main>
+</body>
+</html>

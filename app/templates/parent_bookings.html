@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Parent Bookings — Meta Ads Manager{% endblock %}
+{% block content %}
+<h1>Parent demo bookings</h1>
+<p class="muted">All submissions from the <a href="/book/parent" style="color: var(--accent);">parent booking form</a>.</p>
+
+<div class="card">
+  <form method="get" action="/bookings/parent" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+    <input type="text" name="search" placeholder="Search name, phone, class..." value="{{ search }}">
+    <button type="submit" class="btn">Search</button>
+    {% if search %}
+    <a href="/bookings/parent" class="btn btn-secondary" style="text-decoration:none;">Clear</a>
+    {% endif %}
+    <a href="/api/book/parent" class="btn btn-secondary" style="text-decoration:none; margin-left: auto;">JSON API</a>
+  </form>
+</div>
+
+<div class="card">
+  <p class="muted" style="margin-top: 0;">{{ bookings|length }} booking(s)</p>
+  {% if bookings %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Submitted</th>
+        <th>Class</th>
+        <th>Parent</th>
+        <th>Child</th>
+        <th>Phone</th>
+        <th>Source</th>
+        <th>Mode</th>
+        <th>Tutor</th>
+        <th>Slot</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in bookings %}
+      <tr>
+        <td>#{{ b.id }}</td>
+        <td>{{ b.created_at.strftime("%d %b %Y, %H:%M") if b.created_at else "—" }}</td>
+        <td>{{ b.child_class }}</td>
+        <td>{{ b.parent_name }}</td>
+        <td>{{ b.child_name }}</td>
+        <td>{{ b.phone or "—" }}</td>
+        <td>{{ b.platform or "web" }}{% if b.utm_campaign %}<br><span class="muted" style="font-size:0.8rem">{{ b.utm_campaign }}</span>{% endif %}</td>
+        <td>{{ "Online" if b.mode == "online" else "Offline" }}</td>
+        <td>{{ b.tutor_gender|capitalize }}</td>
+        <td>{{ b.slot_date }} {{ b.slot_time }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No bookings yet. Share the form at <a href="/book/parent" style="color: var(--accent);">/book/parent</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}
