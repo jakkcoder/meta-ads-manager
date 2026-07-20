@@ -87,3 +87,26 @@ def test_junk_and_gold_excluded_from_parents_export():
         r for r in parents if not r.get("is_junk") and r.get("status") != GOLD_STATUS
     ]
     assert [r["id"] for r in exported] == ["keep"]
+
+
+def test_incremental_export_merges_existing_gcs_snapshot(monkeypatch):
+    from app.services import leads_export
+
+    existing = {
+        "leads": [
+            {"id": "old", "created_time": "2026-07-01T00:00:00+00:00"},
+            {"id": "replace", "created_time": "2026-07-02T00:00:00+00:00", "old": True},
+        ]
+    }
+    monkeypatch.setattr(leads_export.gcs_store, "read_json", lambda *_args: existing)
+    settings = type("Settings", (), {"gcs_leads_prefix": "meta-ads/leads"})()
+    merged = leads_export._merge_export_snapshot(
+        settings,
+        [
+            {"id": "replace", "created_time": "2026-07-03T00:00:00+00:00"},
+            {"id": "new", "created_time": "2026-07-04T00:00:00+00:00"},
+        ],
+        segment="tutors",
+        filename="tutors.json",
+    )
+    assert [record["id"] for record in merged] == ["new", "replace", "old"]

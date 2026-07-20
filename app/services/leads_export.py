@@ -135,6 +135,36 @@ def _build_json_payload(records: list[dict], *, segment: str) -> dict:
     }
 
 
+def _merge_export_snapshot(
+    settings: Settings, records: list[dict], *, segment: str, filename: str
+) -> list[dict]:
+    """Merge a stateless-job delta into the durable GCS segment snapshot.
+
+    Cloud Run Jobs start with an empty SQLite cache. Without this merge, an
+    incremental job would export only its new leads and replace all historical
+    records in ``tutors.json`` / ``parents.json``.
+    """
+    existing_payload = gcs_store.read_json(settings, _leads_path(settings, filename))
+    existing = (
+        existing_payload.get("leads", [])
+        if isinstance(existing_payload, dict)
+        else []
+    )
+    by_id = {
+        str(record.get("id")): record
+        for record in existing
+        if isinstance(record, dict) and record.get("id")
+    }
+    for record in records:
+        if record.get("id"):
+            by_id[str(record["id"])] = record
+    return sorted(
+        by_id.values(),
+        key=lambda record: record.get("created_time") or "",
+        reverse=True,
+    )
+
+
 def _unclassified_form_counts(records: list[dict]) -> dict[str, int]:
     counts: dict[str, int] = {}
     for record in records:
@@ -190,7 +220,15 @@ def export_leads_to_gcs(db: Session, settings: Settings) -> dict:
     if not settings.gcs_leads_bucket:
         raise ValueError("GCS_LEADS_BUCKET is not set in .env")
 
-    tutors, parents, unclassified, tutors_payload, parents_payload = build_segment_exports(db)
+    tutors, parents, unclassified, _tutors_payload, _parents_payload = build_segment_exports(db)
+    tutors = _merge_export_snapshot(
+        settings, tutors, segment="tutors", filename=TUTORS_FILENAME
+    )
+    parents = _merge_export_snapshot(
+        settings, parents, segment="parents", filename=PARENTS_FILENAME
+    )
+    tutors_payload = _build_json_payload(tutors, segment="tutors")
+    parents_payload = _build_json_payload(parents, segment="parents")
 
     tutors_path = _leads_path(settings, TUTORS_FILENAME)
     parents_path = _leads_path(settings, PARENTS_FILENAME)

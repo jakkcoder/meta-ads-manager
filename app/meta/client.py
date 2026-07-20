@@ -87,7 +87,7 @@ class MetaClient:
                 code = error.get("code")
                 subcode = error.get("error_subcode")
                 message = error.get("message", "Meta API error")
-                if code in (17, 32, 4) or subcode in (244,):
+                if code in (2, 17, 32, 4) or subcode in (244, 1892058):
                     time.sleep(2**attempt)
                     last_error = MetaAPIError(message, code=code, subcode=subcode)
                     continue

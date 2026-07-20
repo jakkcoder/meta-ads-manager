@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from datetime import datetime, timezone
 
@@ -20,12 +21,18 @@ def main() -> None:
     try:
         # Ads are a small inventory; full refresh guarantees every enabled ad,
         # ad set, campaign, creative, and attached lead form is current.
+        full = os.environ.get("META_FULL_SYNC", "").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+        }
         result = {
             "started_at": started_at,
+            "full_sync": full,
             "ads": run_ads_sync(db, settings, full=True),
             # Lead cursor survives job restarts through GCS manifest cursors.
-            "leads": run_leads_sync(db, settings, full=False, export=True),
-            "insights": run_insights_sync(db, settings, full=False),
+            "leads": run_leads_sync(db, settings, full=full, export=True),
+            "insights": run_insights_sync(db, settings, full=full),
             "status": "ok",
         }
         print(json.dumps(result, indent=2, default=str))
