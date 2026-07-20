@@ -15,6 +15,7 @@ TUTOR_FORM_IDS = {
     "1332755172115131",  # Trusted Teacher
     "3888828671411723",  # Generated form 05/23/2026
     "2512058025921166",  # find_Tutors — findmyteacher ads (Gharkaguru_teacher_focus, 06/26/2026)
+    "38248227824775801",  # Teacher Registration — Subjects, Classes & Area (2026-07)
 }
 
 # Explicit parent allowlist (mirrors TUTOR_FORM_IDS). Forms in neither list are
