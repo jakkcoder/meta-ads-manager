@@ -25,6 +25,18 @@ def _parse_cursor_ts(cursor_value: str | None) -> int | None:
             return None
 
 
+def _gcs_cursor(settings: Settings, resource_type: str) -> str | None:
+    """Use the durable GCS manifest when a scheduled job starts with an empty DB."""
+    if not settings.gcs_leads_bucket:
+        return None
+    try:
+        from app.services import gcs_store
+
+        return (gcs_store.read_manifest(settings).get("cursors") or {}).get(resource_type)
+    except Exception:
+        return None
+
+
 def ensure_page_token(settings: Settings, client: MetaClient) -> tuple[str, str]:
     page_id = settings.page_id
     page_token = settings.page_access_token
@@ -72,10 +84,15 @@ def sync_leads(db: Session, settings: Settings, *, full_sync: bool = False) -> d
         resource_type = f"leads:{form_id}"
         cursor = repo.get_cursor(db, resource_type)
 
+        durable_cursor = _gcs_cursor(settings, resource_type)
         since_ts = (
             _default_leads_since()
             if full_sync
-            else (_parse_cursor_ts(cursor.cursor_value if cursor else None) or _default_leads_since())
+            else (
+                _parse_cursor_ts(cursor.cursor_value if cursor else None)
+                or _parse_cursor_ts(durable_cursor)
+                or _default_leads_since()
+            )
         )
         overlap = settings.leads_overlap_seconds
 
@@ -100,9 +117,16 @@ def sync_leads(db: Session, settings: Settings, *, full_sync: bool = False) -> d
                     max_created = created
 
             if max_created:
-                repo.upsert_cursor(db, resource_type, max_created.isoformat())
+                new_cursor = max_created.isoformat()
             else:
-                repo.upsert_cursor(db, resource_type, str(since_ts))
+                new_cursor = str(since_ts)
+            repo.upsert_cursor(db, resource_type, new_cursor)
+            if settings.gcs_leads_bucket:
+                from app.services import gcs_store
+
+                gcs_store.update_manifest_sync(
+                    settings, resource_type, cursor=new_cursor, result={"form_id": form_id}
+                )
 
             total_new += new_count
             db.commit()

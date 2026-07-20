@@ -100,6 +100,8 @@ def delete_blobs_except(settings: Settings, prefix: str, keep_paths: set[str]) -
 
 
 def read_manifest(settings: Settings) -> dict[str, Any]:
+    if not settings.gcs_leads_bucket:
+        return dict(MANIFEST_DEFAULT)
     raw = read_json(settings, settings.gcs_manifest_path)
     if not isinstance(raw, dict):
         return dict(MANIFEST_DEFAULT)

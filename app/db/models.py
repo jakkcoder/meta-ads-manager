@@ -51,6 +51,7 @@ class Ad(Base):
     status: Mapped[str | None] = mapped_column(String(32))
     effective_status: Mapped[str | None] = mapped_column(String(32))
     creative_id: Mapped[str | None] = mapped_column(String(64))
+    leadgen_form_id: Mapped[str | None] = mapped_column(String(64), index=True)
     created_time: Mapped[datetime | None] = mapped_column(DateTime)
     updated_time: Mapped[datetime | None] = mapped_column(DateTime)
     synced_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())

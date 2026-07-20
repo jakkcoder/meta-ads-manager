@@ -440,8 +440,10 @@ def ads_page(
 
 @app.post("/sync/ads")
 def web_sync_ads(db: Session = Depends(get_db), settings: Settings = Depends(get_settings)):
-    sync_ads(db, settings)
-    return RedirectResponse(url="/", status_code=303)
+    # The Ads page is an operational inventory, so refresh all ads/creatives
+    # and their attached Instant Forms instead of relying on an incremental cursor.
+    sync_ads(db, settings, full_sync=True)
+    return RedirectResponse(url="/ads", status_code=303)
 
 
 @app.post("/sync/leads")

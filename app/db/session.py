@@ -59,10 +59,20 @@ def _migrate_leads(engine) -> None:
                 conn.execute(text(f"ALTER TABLE leads ADD COLUMN {name} {col_type}"))
 
 
+def _migrate_ads(engine) -> None:
+    if "ads" not in inspect(engine).get_table_names():
+        return
+    existing = {c["name"] for c in inspect(engine).get_columns("ads")}
+    if "leadgen_form_id" not in existing:
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE ads ADD COLUMN leadgen_form_id VARCHAR(64)"))
+
+
 def init_db() -> None:
     Base.metadata.create_all(bind=engine)
     _migrate_parent_bookings(engine)
     _migrate_leads(engine)
+    _migrate_ads(engine)
 
 
 def get_db() -> Generator[Session, None, None]:

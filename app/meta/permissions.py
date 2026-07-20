@@ -7,11 +7,23 @@ REQUIRED_LEAD_PERMISSIONS = {"leads_retrieval", "pages_show_list"}
 
 def check_permissions(settings: Settings) -> dict:
     client = MetaClient(settings)
-    granted = {
-        item["permission"]
-        for item in client.get_permissions()
-        if item.get("status") == "granted"
-    }
+    try:
+        granted = {
+            item["permission"]
+            for item in client.get_permissions()
+            if item.get("status") == "granted"
+        }
+    except Exception as exc:
+        return {
+            "granted": [],
+            "missing_ads": sorted(REQUIRED_AD_PERMISSIONS),
+            "missing_leads": sorted(REQUIRED_LEAD_PERMISSIONS),
+            "can_sync_ads": False,
+            "can_sync_leads": False,
+            "pages": [],
+            "page_error": str(exc),
+            "fix_steps": _fix_steps(sorted(REQUIRED_LEAD_PERMISSIONS)),
+        }
 
     missing_ads = sorted(REQUIRED_AD_PERMISSIONS - granted)
     missing_leads = sorted(REQUIRED_LEAD_PERMISSIONS - granted)

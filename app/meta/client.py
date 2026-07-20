@@ -23,7 +23,8 @@ class MetaClient:
         "targeting,created_time,updated_time"
     )
     AD_FIELDS = (
-        "id,name,status,effective_status,adset_id,creative{id},created_time,updated_time"
+        "id,name,status,effective_status,adset_id,"
+        "creative{id,name,object_story_spec},created_time,updated_time"
     )
     FORM_FIELDS = "id,name,status,leads_count,created_time"
     LEAD_FIELDS = (

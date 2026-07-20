@@ -92,9 +92,34 @@ def upsert_ad(db: Session, data: dict) -> None:
     ad.status = data.get("status")
     ad.effective_status = data.get("effective_status")
     ad.creative_id = creative.get("id") if isinstance(creative, dict) else data.get("creative_id")
+    ad.leadgen_form_id = _extract_leadgen_form_id(creative)
     ad.created_time = parse_meta_datetime(data.get("created_time"))
     ad.updated_time = parse_meta_datetime(data.get("updated_time"))
     ad.synced_at = _utcnow()
+
+
+def _extract_leadgen_form_id(creative: object) -> str | None:
+    """Extract the Instant Form ID from a Meta ad creative's story spec."""
+    if not isinstance(creative, dict):
+        return None
+    spec = creative.get("object_story_spec") or {}
+    if isinstance(spec, str):
+        try:
+            import json
+
+            spec = json.loads(spec)
+        except (TypeError, ValueError):
+            return None
+    if not isinstance(spec, dict):
+        return None
+    for section in ("link_data", "video_data"):
+        payload = spec.get(section) or {}
+        cta = payload.get("call_to_action") or {}
+        value = cta.get("value") or {}
+        form_id = value.get("lead_gen_form_id")
+        if form_id:
+            return str(form_id)
+    return None
 
 
 def upsert_leadgen_form(db: Session, page_id: str, data: dict) -> None:

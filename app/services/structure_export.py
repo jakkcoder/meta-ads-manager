@@ -47,6 +47,8 @@ def export_structure_snapshot(db: Session, settings: Settings) -> dict:
                 "name": a.name,
                 "status": a.status,
                 "effective_status": a.effective_status,
+                "creative_id": a.creative_id,
+                "leadgen_form_id": a.leadgen_form_id,
             }
             for a in ads
         ],

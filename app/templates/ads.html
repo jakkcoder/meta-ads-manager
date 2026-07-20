@@ -25,6 +25,9 @@
           <div class="tree-item" style="display:flex; align-items:center; gap:0.75rem;">
             <span>{{ ad.name or ad.id }}</span>
             <span class="muted">{{ ad.effective_status or ad.status }}</span>
+            {% if ad.leadgen_form_id %}
+            <span class="muted">Form: {{ ad.leadgen_form_id }}</span>
+            {% endif %}
             {% if ad.status == "ACTIVE" %}
             <form method="post" action="/ads/{{ ad.id }}/pause" class="inline">
               <button type="submit" class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.8rem;">Pause</button>
