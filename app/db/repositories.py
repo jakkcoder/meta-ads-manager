@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.db.models import (
@@ -134,6 +134,15 @@ def upsert_leadgen_form(db: Session, page_id: str, data: dict) -> None:
     form.synced_at = _utcnow()
 
 
+def _replace_lead_fields(db: Session, lead_id: str, field_data: list) -> None:
+    db.execute(delete(LeadField).where(LeadField.lead_id == lead_id))
+    for field in field_data:
+        name = field.get("name", "")
+        values = field.get("values") or []
+        value = values[0] if values else None
+        db.add(LeadField(lead_id=lead_id, field_name=name, field_value=value))
+
+
 def upsert_lead(db: Session, data: dict) -> bool:
     lead_id = data["id"]
     created_time = parse_meta_datetime(data.get("created_time"))
@@ -148,6 +157,7 @@ def upsert_lead(db: Session, data: dict) -> bool:
         existing.is_organic = data.get("is_organic") if data.get("is_organic") is not None else existing.is_organic
         existing.raw_json = data
         existing.synced_at = _utcnow()
+        _replace_lead_fields(db, lead_id, data.get("field_data") or [])
         return False
 
     lead = Lead(
@@ -164,11 +174,7 @@ def upsert_lead(db: Session, data: dict) -> bool:
     )
     db.add(lead)
 
-    for field in data.get("field_data", []):
-        name = field.get("name", "")
-        values = field.get("values") or []
-        value = values[0] if values else None
-        db.add(LeadField(lead_id=lead_id, field_name=name, field_value=value))
+    _replace_lead_fields(db, lead_id, data.get("field_data") or [])
 
     return True
 

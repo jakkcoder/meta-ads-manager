@@ -37,6 +37,10 @@ def test_getparent_new_form_routes_to_parents():
     assert _segment_for_record(_record("4495668977342555")) == "parents"
 
 
+def test_getparent_v5_form_routes_to_parents():
+    assert _segment_for_record(_record("1042788108124421")) == "parents"
+
+
 def test_unknown_form_is_unclassified():
     assert _segment_for_record(_record("0000000000000000")) is None
 

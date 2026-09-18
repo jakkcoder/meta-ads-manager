@@ -1,0 +1,26 @@
+steps:
+  - name: python:3.12-slim
+    entrypoint: bash
+    secretEnv: ["PAGE_ACCESS_TOKEN"]
+    env:
+      - "PYTHONPATH=/workspace"
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        cd /workspace
+        pip install -q -r requirements.txt
+        export PAGE_ACCESS_TOKEN="$$PAGE_ACCESS_TOKEN"
+        export Meta_Access_token="$$PAGE_ACCESS_TOKEN"
+        export PAGE_ID=347244005670587
+        python scripts/upgrade_getparent_form_with_details.py | tee /workspace/upgrade_result.json
+        NEW_FORM=$$(python -c "import json; print(json.load(open('upgrade_result.json'))['new_form_id'])")
+        echo "NEW_FORM_ID=$$NEW_FORM" | tee /workspace/form.env
+        export PARENT_FORM_IDS_EXTRA="$$NEW_FORM"
+        python cli.py sync leads --full --export || true
+availableSecrets:
+  secretManager:
+    - versionName: projects/vertex-ai-learning-487906/secrets/PAGE_ACCESS_TOKEN/versions/latest
+      env: PAGE_ACCESS_TOKEN
+options:
+  logging: CLOUD_LOGGING_ONLY

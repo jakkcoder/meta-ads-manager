@@ -114,6 +114,48 @@ def save_annotation(
     return current
 
 
+def apply_annotations_to_records(
+    records: list[dict], settings: Settings
+) -> list[dict]:
+    """Overlay GCS annotations onto exported lead dicts (for GCS-sourced UI)."""
+    annotations = load_annotations(settings)
+    if not annotations:
+        return records
+    out: list[dict] = []
+    for record in records:
+        merged = dict(record)
+        ann = annotations.get(str(record.get("id"))) or {}
+        if "is_junk" in ann:
+            merged["is_junk"] = bool(ann.get("is_junk"))
+        for key in (
+            "note",
+            "budget",
+            "student_class",
+            "status",
+            "mode",
+            "location",
+            "demo_review_status",
+        ):
+            if ann.get(key) is not None:
+                merged[key] = ann.get(key)
+        if ann.get("follow_up_count") is not None:
+            merged["follow_up_count"] = int(ann.get("follow_up_count") or 0)
+        for ts_key in (
+            "first_follow_up_at",
+            "last_follow_up_at",
+            "gold_transition_at",
+            "demo_at",
+            "updated_at",
+        ):
+            if ann.get(ts_key) is not None:
+                if ts_key == "updated_at":
+                    merged["annotation_updated_at"] = ann.get(ts_key)
+                else:
+                    merged[ts_key] = ann.get(ts_key)
+        out.append(merged)
+    return out
+
+
 def apply_annotations_to_db(db: Session, settings: Settings) -> int:
     """Overlay GCS annotations onto local `Lead` rows. Returns rows updated."""
     annotations = load_annotations(settings)

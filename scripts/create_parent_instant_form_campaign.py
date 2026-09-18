@@ -60,17 +60,18 @@ def _demo_date_options() -> list[dict[str, str]]:
 
 
 def build_form_questions() -> list[dict]:
-    """Short instant form: demo date and phone only."""
+    """Instant form: parent name, phone, demo timing."""
     return [
+        {"type": "FULL_NAME", "key": "full_name"},
+        {
+            "type": "PHONE",
+            "key": "phone_number",
+        },
         {
             "type": "CUSTOM",
             "key": "demo_date",
             "label": "When would you like the demo?",
             "options": _demo_date_options(),
-        },
-        {
-            "type": "PHONE",
-            "key": "phone_number",
         },
     ]
 

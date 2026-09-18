@@ -1,3 +1,4 @@
+import logging
 import threading
 from pathlib import Path
 
@@ -39,6 +40,8 @@ app.mount("/cmo", WSGIMiddleware(dash_app.server))
 def cmo_redirect():
     return RedirectResponse(url="/cmo/", status_code=307)
 
+logger = logging.getLogger(__name__)
+
 scheduler = BackgroundScheduler()
 
 
@@ -62,10 +65,9 @@ def on_startup() -> None:
             db = SessionLocal()
             try:
                 sync_leads(db, settings)
-                # Export to GCS after each sync to keep downstream current
                 export_leads_to_gcs(db, settings)
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.exception("scheduled_leads_sync failed: %s", exc)
             finally:
                 db.close()
 
@@ -75,6 +77,9 @@ def on_startup() -> None:
             minutes=settings.sync_leads_interval_minutes,
             id="leads_sync",
             replace_existing=True,
+            coalesce=True,
+            max_instances=1,
+            misfire_grace_time=900,
         )
 
     if settings.sync_insights_interval_minutes > 0:
@@ -300,10 +305,9 @@ def parent_leads_page(
     settings: Settings = Depends(get_settings),
 ):
     from app.services.lead_annotations import apply_annotations_to_db
-    from app.services.leads_export import GOLD_STATUS, list_parent_lead_records
+    from app.services.leads_export import GOLD_STATUS, list_parent_lead_records_from_gcs
 
-    # Populate the DB on a fresh Cloud Run instance, then re-attach durable
-    # annotations so the page is correct even right after a cold start.
+    # Parent list reads durable GCS export (Cloud Run SQLite is ephemeral/stale).
     _ensure_leads_populated(db, settings)
     if settings.gcs_leads_bucket:
         try:
@@ -313,13 +317,20 @@ def parent_leads_page(
 
     tab = tab if tab in ("latest", "older") else "latest"
 
-    # Gold leads (a demo has been scheduled) live on the dedicated /leads/gold
-    # page and are hidden from the parent list.
-    all_records = [
-        r
-        for r in list_parent_lead_records(db, include_junk=True)
-        if r.get("status") != GOLD_STATUS
-    ]
+    if settings.gcs_leads_bucket:
+        all_records = [
+            r
+            for r in list_parent_lead_records_from_gcs(settings, include_junk=True)
+            if r.get("status") != GOLD_STATUS
+        ]
+    else:
+        from app.services.leads_export import list_parent_lead_records
+
+        all_records = [
+            r
+            for r in list_parent_lead_records(db, include_junk=True)
+            if r.get("status") != GOLD_STATUS
+        ]
 
     # The "latest form" is whichever parent form has the most recent lead.
     # Records are ordered newest-first, so the first record names that form.

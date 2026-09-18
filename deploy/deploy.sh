@@ -84,24 +84,42 @@ gcloud beta run services update "${SERVICE_NAME}" \
   --quiet
 
 echo "==> Creating Cloud Scheduler job ${SCHEDULER_JOB}"
+SCHEDULER_JOB_URI="https://run.googleapis.com/v2/projects/${PROJECT_ID}/locations/${REGION}/jobs/meta-teacher-ingestion:run"
 if gcloud scheduler jobs describe "${SCHEDULER_JOB}" --location="${REGION}" >/dev/null 2>&1; then
   gcloud scheduler jobs update http "${SCHEDULER_JOB}" \
     --location="${REGION}" \
     --schedule="0 * * * *" \
-    --uri="${SERVICE_URL}/api/sync/all?export=true" \
+    --uri="${SCHEDULER_JOB_URI}" \
     --http-method=POST \
-    --oidc-service-account-email="${SA_EMAIL}" \
-    --oidc-token-audience="${SERVICE_URL}" \
+    --oauth-service-account-email="${SA_EMAIL}" \
+    --oauth-token-scope="https://www.googleapis.com/auth/cloud-platform" \
+    --update-headers="Content-Type=application/json" \
+    --message-body="{}" \
     --quiet
 else
   gcloud scheduler jobs create http "${SCHEDULER_JOB}" \
     --location="${REGION}" \
     --schedule="0 * * * *" \
-    --uri="${SERVICE_URL}/api/sync/all?export=true" \
+    --uri="${SCHEDULER_JOB_URI}" \
     --http-method=POST \
-    --oidc-service-account-email="${SA_EMAIL}" \
-    --oidc-token-audience="${SERVICE_URL}" \
+    --oauth-service-account-email="${SA_EMAIL}" \
+    --oauth-token-scope="https://www.googleapis.com/auth/cloud-platform" \
+    --update-headers="Content-Type=application/json" \
+    --message-body="{}" \
     --quiet
+fi
+
+gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/run.developer" \
+  --condition=None \
+  --quiet >/dev/null || true
+
+if gcloud run jobs describe meta-teacher-ingestion --region="${REGION}" --project="${PROJECT_ID}" >/dev/null 2>&1; then
+  gcloud run jobs add-iam-policy-binding meta-teacher-ingestion \
+    --region="${REGION}" --project="${PROJECT_ID}" \
+    --member="serviceAccount:${SA_EMAIL}" --role="roles/run.invoker" \
+    --quiet >/dev/null || true
 fi
 
 gcloud run services add-iam-policy-binding "${SERVICE_NAME}" \

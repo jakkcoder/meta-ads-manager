@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from datetime import datetime, timezone
 
 from sqlalchemy import select
@@ -21,13 +22,28 @@ TUTOR_FORM_IDS = {
 # Explicit parent allowlist (mirrors TUTOR_FORM_IDS). Forms in neither list are
 # left unclassified rather than silently counted as parents, so new/unknown
 # forms surface in the export result instead of skewing the parent segment.
-PARENT_FORM_IDS = {
-    "4495668977342555",  # getparent_new — parent_page ad (Gharkaguru_parent_instant, 06/26/2026)
+# Active parent lead form (Meta instant form on parent_page ads).
+ACTIVE_PARENT_FORM_ID = "1042788108124421"  # getparent_new_with_details_v5
+
+# Retired forms — kept so existing leads in Meta DB still export to parents.json.
+LEGACY_PARENT_FORM_IDS = {
+    "4495668977342555",  # getparent_new
+    "1336167858193871",  # getparent_new_with_details_v3
+    "1394332132551813",  # getparent_new_with_details_v4
+    "1337209721880919",  # getparent_new_with_details_v2
     "1501785071409085",  # For parents only
     "2023094392418250",  # Parents Only - Qualified (2026-06)
-    "1477904857469616",  # Book Demo - Delhi Parents (Date + Phone) — Book_Demo ad
+    "1477904857469616",  # Book Demo - Delhi Parents (Date + Phone)
     "2007957593939594",  # find_tutors_parent (archived)
 }
+
+PARENT_FORM_IDS = LEGACY_PARENT_FORM_IDS | {ACTIVE_PARENT_FORM_ID}
+_extra_parent_forms = os.getenv("PARENT_FORM_IDS_EXTRA", "")
+if _extra_parent_forms.strip():
+    for _fid in _extra_parent_forms.split(","):
+        _fid = _fid.strip()
+        if _fid:
+            PARENT_FORM_IDS.add(_fid)
 TUTORS_FILENAME = "tutors.json"
 PARENTS_FILENAME = "parents.json"
 
@@ -275,3 +291,19 @@ def load_leads_segments(settings: Settings) -> tuple[list[dict], list[dict]]:
     tutors = tutors_raw.get("leads", []) if isinstance(tutors_raw, dict) else []
     parents = parents_raw.get("leads", []) if isinstance(parents_raw, dict) else []
     return tutors, parents
+
+
+def list_parent_lead_records_from_gcs(
+    settings: Settings, *, include_junk: bool = False
+) -> list[dict]:
+    """Parent leads from durable GCS export (matches CMO dashboard freshness)."""
+    if not settings.gcs_leads_bucket:
+        return []
+    from app.services.lead_annotations import apply_annotations_to_records
+
+    _tutors, parents = load_leads_segments(settings)
+    parents = apply_annotations_to_records(parents, settings)
+    parents.sort(key=lambda r: r.get("created_time") or "", reverse=True)
+    if include_junk:
+        return parents
+    return [r for r in parents if not r.get("is_junk")]
